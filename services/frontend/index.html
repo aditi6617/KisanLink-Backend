@@ -1,0 +1,4669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        KisanLink - Farmer Market Intelligence
+    </title>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                #f4f7f4;
+
+            color:
+                #26332a;
+
+            line-height:
+                1.6;
+        }
+
+        header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #2e7d32,
+                    #66bb6a
+                );
+
+            color:
+                white;
+
+            padding:
+                25px 20px;
+
+            text-align:
+                center;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            font-size:
+                32px;
+
+            margin-bottom:
+                6px;
+        }
+
+        header p {
+            font-size:
+                16px;
+
+            opacity:
+                0.95;
+        }
+
+        .container {
+            width:
+                92%;
+
+            max-width:
+                1200px;
+
+            margin:
+                25px auto;
+        }
+
+        section {
+            background:
+                white;
+
+            padding:
+                25px;
+
+            margin-bottom:
+                25px;
+
+            border-radius:
+                14px;
+
+            box-shadow:
+                0 3px 12px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        section h2 {
+            color:
+                #2e7d32;
+
+            margin-bottom:
+                20px;
+
+            font-size:
+                24px;
+        }
+
+        section h3 {
+            color:
+                #388e3c;
+
+            margin-bottom:
+                12px;
+        }
+
+        label {
+            display:
+                block;
+
+            font-weight:
+                bold;
+
+            margin-bottom:
+                7px;
+
+            margin-top:
+                15px;
+        }
+
+        input,
+        select {
+            width:
+                100%;
+
+            padding:
+                12px;
+
+            border:
+                1px solid #c8d1c9;
+
+            border-radius:
+                8px;
+
+            font-size:
+                15px;
+
+            background:
+                white;
+        }
+
+        input:focus,
+        select:focus {
+            outline:
+                none;
+
+            border-color:
+                #43a047;
+
+            box-shadow:
+                0 0 0 2px
+                rgba(67, 160, 71, 0.12);
+        }
+
+        button {
+            border:
+                none;
+
+            border-radius:
+                8px;
+
+            padding:
+                12px 18px;
+
+            margin-top:
+                18px;
+
+            font-size:
+                15px;
+
+            font-weight:
+                bold;
+
+            cursor:
+                pointer;
+
+            transition:
+                0.2s;
+        }
+
+        button:hover {
+            transform:
+                translateY(-1px);
+        }
+
+        button:disabled {
+            opacity:
+                0.65;
+
+            cursor:
+                not-allowed;
+
+            transform:
+                none;
+        }
+
+        #locationBtn {
+            background:
+                #1565c0;
+
+            color:
+                white;
+
+            width:
+                100%;
+        }
+
+        #findMarketBtn {
+            background:
+                #2e7d32;
+
+            color:
+                white;
+
+            width:
+                100%;
+
+            font-size:
+                16px;
+        }
+
+        .grid {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap:
+                20px;
+        }
+
+        .card-grid {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap:
+                18px;
+        }
+
+        .info-card {
+            background:
+                #f8fbf8;
+
+            border:
+                1px solid #dce8dc;
+
+            border-radius:
+                10px;
+
+            padding:
+                18px;
+        }
+
+        .info-card h3 {
+            margin-bottom:
+                8px;
+        }
+
+        .info-card .value {
+            font-size:
+                23px;
+
+            font-weight:
+                bold;
+
+            color:
+                #2e7d32;
+        }
+
+        .hidden {
+            display:
+                none !important;
+        }
+
+        .location-box {
+            margin-top:
+                15px;
+
+            padding:
+                12px;
+
+            border-radius:
+                8px;
+
+            background:
+                #f1f5f1;
+
+            border:
+                1px solid #d7dfd7;
+
+            font-size:
+                14px;
+        }
+
+        .location-box.success {
+            background:
+                #e8f5e9;
+
+            border-color:
+                #81c784;
+
+            color:
+                #1b5e20;
+        }
+
+        .location-box.warning {
+            background:
+                #fff8e1;
+
+            border-color:
+                #ffcc80;
+
+            color:
+                #8d5b00;
+        }
+
+        .location-box.error {
+            background:
+                #ffebee;
+
+            border-color:
+                #ef9a9a;
+
+            color:
+                #b71c1c;
+        }
+
+        .status-box {
+            margin-top:
+                15px;
+
+            padding:
+                14px;
+
+            border-radius:
+                8px;
+
+            font-weight:
+                500;
+        }
+
+        .status-box.info {
+            background:
+                #e3f2fd;
+
+            color:
+                #0d47a1;
+        }
+
+        .status-box.success {
+            background:
+                #e8f5e9;
+
+            color:
+                #1b5e20;
+        }
+
+        .status-box.error {
+            background:
+                #ffebee;
+
+            color:
+                #b71c1c;
+        }
+
+        .market-card {
+            background:
+                white;
+
+            border:
+                1px solid #dce8dc;
+
+            border-radius:
+                12px;
+
+            padding:
+                18px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.06);
+        }
+
+        .market-card h3 {
+            color:
+                #2e7d32;
+
+            margin-bottom:
+                12px;
+        }
+
+        .market-card p {
+            margin:
+                7px 0;
+        }
+
+        .best-market {
+            border:
+                2px solid #43a047;
+
+            background:
+                #f1f8f1;
+        }
+
+        .recommendation-box {
+            background:
+                #edf7ed;
+
+            border-left:
+                5px solid #43a047;
+
+            padding:
+                18px;
+
+            border-radius:
+                8px;
+
+            margin-top:
+                15px;
+        }
+
+        table {
+            width:
+                100%;
+
+            border-collapse:
+                collapse;
+
+            margin-top:
+                15px;
+        }
+
+        th,
+        td {
+            padding:
+                12px;
+
+            border-bottom:
+                1px solid #e0e0e0;
+
+            text-align:
+                left;
+        }
+
+        th {
+            background:
+                #f1f5f1;
+
+            color:
+                #2e7d32;
+
+            font-weight:
+                bold;
+        }
+
+        .best-row {
+            background:
+                #e8f5e9;
+
+            font-weight:
+                bold;
+        }
+
+        .chart-container {
+            width:
+                100%;
+
+            height:
+                350px;
+
+            min-height:
+                350px;
+
+            margin:
+                20px 0;
+
+            position:
+                relative;
+        }
+
+        .chart-container canvas {
+            width:
+                100% !important;
+
+            height:
+                100% !important;
+
+            display:
+                block;
+        }
+        /* Logout Button */
+
+.header-top {
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    gap:
+        20px;
+}
+
+.logout-btn {
+    background:
+        #d32f2f;
+
+    color:
+        white;
+
+    border:
+        none;
+
+    padding:
+        10px 18px;
+
+    border-radius:
+        8px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        bold;
+
+    cursor:
+        pointer;
+
+    margin-top:
+        0;
+}
+
+.logout-btn:hover {
+    background:
+        #b71c1c;
+}
+
+        footer {
+            text-align:
+                center;
+
+            padding:
+                25px;
+
+            margin-top:
+                20px;
+
+            color:
+                #607060;
+
+            font-size:
+                14px;
+        }
+
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size:
+                    25px;
+            }
+
+            section {
+                padding:
+                    18px;
+            }
+
+            .grid {
+                grid-template-columns:
+                    1fr;
+
+            table {
+                display:
+                    block;
+
+                overflow-x:
+                    auto;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="header-top">
+
+        <div>
+            <h1>
+                🌾 KisanLink
+            </h1>
+
+            <p>
+                Farmer Market Intelligence &amp; Net Realisation Platform
+            </p>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <!-- =================================================
+         FARMER DETAILS
+    ================================================== -->
+
+    <section>
+
+        <h2>
+            👨‍🌾 Farmer Details
+        </h2>
+
+        <label for="crop">
+            Select Crop
+        </label>
+
+        <select id="crop">
+
+            <option value="">
+                Select Crop
+            </option>
+
+            <option value="Onion">
+                Onion
+            </option>
+
+            <option value="Tomato">
+                Tomato
+            </option>
+
+            <option value="Potato">
+                Potato
+            </option>
+
+            <option value="Wheat">
+                Wheat
+            </option>
+
+            <option value="Maize">
+                Maize
+            </option>
+
+        </select>
+
+
+        <label for="quantity">
+            Quantity (kg)
+        </label>
+
+        <input
+            id="quantity"
+            type="number"
+            min="1"
+            placeholder="Enter quantity in kg"
+        >
+
+
+        <button id="locationBtn">
+            📍 Detect My Location
+        </button>
+
+
+        <div
+            id="locationStatus"
+            class="location-box"
+        >
+            Location not detected yet.
+        </div>
+
+
+        <button id="findMarketBtn">
+            🔎 Find Best Market
+        </button>
+
+
+        <div
+            id="mainStatus"
+            class="status-box hidden"
+        ></div>
+
+    </section>
+    <!-- =================================================
+         MARKET RESULTS
+    ================================================== -->
+
+    <section
+        id="resultsSection"
+        class="hidden"
+    >
+
+        <h2>
+            📊 Market Analysis
+        </h2>
+
+
+        <!-- =========================
+             SUMMARY CARDS
+        ========================== -->
+
+        <div class="card-grid">
+
+            <div class="info-card">
+
+                <h3>
+                    🏆 Best Market
+                </h3>
+
+                <div
+                    id="bestMarket"
+                    class="value"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    💰 Best Net / kg
+                </h3>
+
+                <div
+                    id="bestNetPerKg"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    💵 Total Net Realisation
+                </h3>
+
+                <div
+                    id="totalNet"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    🚚 Total Cost
+                </h3>
+
+                <div
+                    id="totalCost"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             RECOMMENDATION
+        ========================== -->
+
+        <div class="recommendation-box">
+
+            <h3>
+                💡 KisanLink Recommendation
+            </h3>
+
+            <p id="recommendationReason">
+                Market recommendation will appear here.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             MARKET CARDS
+        ========================== -->
+
+        <div
+            id="marketCards"
+            class="card-grid"
+            style="margin-top: 20px;"
+        ></div>
+
+    </section>
+
+
+    <!-- =================================================
+         MARKET COMPARISON
+    ================================================== -->
+
+    <section
+        id="comparisonSection"
+    >
+
+        <h2>
+            🏪 Market Comparison
+        </h2>
+
+        <p>
+            Compare available markets using price,
+            distance and expected net realisation.
+        </p>
+
+
+        <div
+            style="
+                overflow-x: auto;
+                margin-top: 15px;
+            "
+        >
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Market
+                        </th>
+
+                        <th>
+                            Price / Quintal
+                        </th>
+
+                        <th>
+                            Distance
+                        </th>
+
+                        <th>
+                            Net / kg
+                        </th>
+
+                        <th>
+                            Best?
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="comparisonTableBody"
+                >
+
+                    <tr>
+
+                        <td colspan="5">
+                            Market comparison will appear after analysis.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SELLING STRATEGY
+    ================================================== -->
+
+    <section
+        id="strategySection"
+        class="hidden"
+    >
+
+        <h2>
+            🎯 Recommended Selling Strategy
+        </h2>
+
+
+        <div class="card-grid">
+
+            <div class="info-card">
+
+                <h3>
+                    🏪 Recommended Market
+                </h3>
+
+                <div
+                    id="strategyMarket"
+                    class="value"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    🌾 Quantity
+                </h3>
+
+                <div
+                    id="strategyQuantity"
+                    class="value"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    💰 Expected Return
+                </h3>
+
+                <div
+                    id="strategyReturn"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    📦 Net Return / kg
+                </h3>
+
+                <div
+                    id="strategyPerKg"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="recommendation-box"
+        >
+
+            <h3>
+                Why this strategy?
+            </h3>
+
+            <p
+                id="strategyReason"
+            >
+                Recommendation reason will appear here.
+            </p>
+
+        </div>
+
+    </section>
+    <!-- =================================================
+         PARTIAL / SPLIT SELLING
+    ================================================== -->
+
+    <section
+        id="sellingPlanSection"
+        class="hidden"
+    >
+
+        <h2>
+            📦 Smart Partial Selling Plan
+        </h2>
+
+        <div
+            id="sellingPlanSummary"
+            class="recommendation-box"
+        >
+            Selling plan will appear here.
+        </div>
+
+
+        <div
+            style="
+                overflow-x: auto;
+                margin-top: 20px;
+            "
+        >
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Market
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Allocation
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="sellingPlanBody"
+                >
+
+                    <tr>
+
+                        <td colspan="3">
+                            Recommended allocation will appear here.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         PROFIT CALCULATOR
+    ================================================== -->
+
+    <section>
+
+        <h2>
+            🧮 Profit Calculator
+        </h2>
+
+        <div class="grid">
+
+            <div>
+
+                <label for="profitQuantity">
+                    Quantity (kg)
+                </label>
+
+                <input
+                    id="profitQuantity"
+                    type="number"
+                    min="1"
+                    placeholder="Enter quantity"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="profitPrice">
+                    Selling Price (₹/quintal)
+                </label>
+
+                <input
+                    id="profitPrice"
+                    type="number"
+                    min="0"
+                    placeholder="Enter selling price"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="profitOtherCost">
+                    Other Cost (₹/kg)
+                </label>
+
+                <input
+                    id="profitOtherCost"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter other cost"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="calculateProfitBtn"
+            style="
+                background: #2e7d32;
+                color: white;
+                width: 100%;
+            "
+        >
+            🧮 Calculate Profit
+        </button>
+
+
+        <div
+            id="profitResult"
+            class="card-grid hidden"
+            style="margin-top: 20px;"
+        >
+
+            <div class="info-card">
+
+                <h3>
+                    💵 Gross Value
+                </h3>
+
+                <div
+                    id="profitGrossValue"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    🚚 Total Cost
+                </h3>
+
+                <div
+                    id="profitTotalCost"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    💰 Net Profit
+                </h3>
+
+                <div
+                    id="profitNetProfit"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    📈 Net Profit / kg
+                </h3>
+
+                <div
+                    id="profitNetPerKg"
+                    class="value"
+                >
+                    ₹0.00
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ADAPTIVE PREVIOUS SALE
+    ================================================== -->
+
+    <section>
+
+        <h2>
+            🔄 Adaptive Selling Recommendation
+        </h2>
+
+        <p>
+            Compare your previous selling outcome
+            with today's market opportunity.
+        </p>
+
+
+        <div class="grid">
+
+            <div>
+
+                <label for="previousCrop">
+                    Previous Crop
+                </label>
+
+                <input
+                    id="previousCrop"
+                    type="text"
+                    placeholder="e.g. Onion"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="previousMarket">
+                    Previous Market
+                </label>
+
+                <input
+                    id="previousMarket"
+                    type="text"
+                    placeholder="Enter previous market"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="previousQuantity">
+                    Quantity Sold (kg)
+                </label>
+
+                <input
+                    id="previousQuantity"
+                    type="number"
+                    min="1"
+                    placeholder="Enter quantity"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="previousPrice">
+                    Selling Price (₹/quintal)
+                </label>
+
+                <input
+                    id="previousPrice"
+                    type="number"
+                    min="0"
+                    placeholder="Enter selling price"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="previousTransport">
+                    Transport Cost (₹)
+                </label>
+
+                <input
+                    id="previousTransport"
+                    type="number"
+                    min="0"
+                    placeholder="Enter transport cost"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="previousOtherCosts">
+                    Other Costs (₹)
+                </label>
+
+                <input
+                    id="previousOtherCosts"
+                    type="number"
+                    min="0"
+                    placeholder="Enter other costs"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="analyzePreviousSaleBtn"
+            style="
+                background: #1565c0;
+                color: white;
+                width: 100%;
+            "
+        >
+            🔍 Analyze Previous Sale
+        </button>
+
+
+        <div
+            id="adaptiveResult"
+            class="recommendation-box hidden"
+        >
+
+            <h3>
+                📊 Adaptive Insight
+            </h3>
+
+            <div
+                id="adaptiveSummary"
+            ></div>
+
+        </div>
+
+    </section>
+    <!-- =================================================
+         MARKET PERFORMANCE CHARTS
+    ================================================== -->
+
+    <section
+        id="chartsSection"
+    >
+
+        <h2>
+            📈 Market Performance
+        </h2>
+
+        <p>
+            Visual comparison of expected net realisation
+            and recommended quantity allocation.
+        </p>
+
+
+        <h3 style="margin-top: 20px;">
+            💰 Net Realisation per kg
+        </h3>
+
+        <div class="chart-container">
+
+            <canvas
+                id="netRealisationChart"
+            ></canvas>
+
+        </div>
+
+
+        <h3 style="margin-top: 30px;">
+            📦 Recommended Quantity Allocation
+        </h3>
+
+        <div class="chart-container">
+
+            <canvas
+                id="allocationChart"
+            ></canvas>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         HOW KISANLINK WORKS
+    ================================================== -->
+
+    <section>
+
+        <h2>
+            ⚙️ How KisanLink Works
+        </h2>
+
+        <div class="card-grid">
+
+            <div class="info-card">
+
+                <h3>
+                    1️⃣ Enter Details
+                </h3>
+
+                <p>
+                    Select your crop and enter the
+                    quantity you want to sell.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    2️⃣ Detect Location
+                </h3>
+
+                <p>
+                    GPS is used to determine the
+                    farmer's location.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    3️⃣ Compare Markets
+                </h3>
+
+                <p>
+                    KisanLink compares market prices,
+                    distance and selling costs.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    4️⃣ Calculate Net Realisation
+                </h3>
+
+                <p>
+                    The expected return is calculated
+                    after relevant costs.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    5️⃣ Find Best Strategy
+                </h3>
+
+                <p>
+                    The system identifies the most
+                    profitable feasible market option.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    6️⃣ Smart Split Selling
+                </h3>
+
+                <p>
+                    When useful, the quantity can be
+                    distributed across multiple markets.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         KEY FEATURES
+    ================================================== -->
+
+    <section>
+
+        <h2>
+            🌾 KisanLink Key Features
+        </h2>
+
+        <div class="card-grid">
+
+            <div class="info-card">
+
+                <h3>
+                    📍 GPS-Based Analysis
+                </h3>
+
+                <p>
+                    Uses the farmer's current location
+                    for market-distance analysis.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    💹 Price Comparison
+                </h3>
+
+                <p>
+                    Compares available market prices
+                    instead of considering price alone.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    💰 Net Realisation
+                </h3>
+
+                <p>
+                    Estimates the actual expected return
+                    after selling-related costs.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    📦 Partial Selling
+                </h3>
+
+                <p>
+                    Supports allocation of produce across
+                    up to three feasible markets.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    🔄 Previous Sale Analysis
+                </h3>
+
+                <p>
+                    Uses the farmer's previous selling
+                    outcome to provide rule-based insights.
+                </p>
+
+            </div>
+
+
+            <div class="info-card">
+
+                <h3>
+                    📊 Visual Insights
+                </h3>
+
+                <p>
+                    Charts make market performance and
+                    selling allocation easier to understand.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         DISCLAIMER
+    ================================================== -->
+
+    <section>
+
+        <div
+            class="status-box info"
+        >
+
+            <strong>
+                ℹ️ Prototype Note:
+            </strong>
+
+            Market prices, distances, capacities and
+            cost values depend on the available backend
+            data. Net realisation represents an expected
+            calculation and may differ from the farmer's
+            actual final sale outcome.
+
+        </div>
+
+    </section>
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================== -->
+
+    <script>
+         // =================================================
+        // LOGIN PROTECTION
+        // =================================================
+
+        if (localStorage.getItem("kisanlink_logged_in") !== "true") {
+
+            window.location.href = "login.html";
+
+        }
+
+
+
+        // =================================================
+        // GLOBAL VARIABLES
+        // =================================================
+
+        let farmerLatitude = null;
+
+        let farmerLongitude = null;
+
+        let farmerGPSAccuracy = null;
+
+
+        let currentMarkets = [];
+
+        let currentPriceData = [];
+
+
+        let netRealisationChart = null;
+
+        let allocationChart = null;
+
+
+
+        // =================================================
+        // DOM ELEMENT HELPER
+        // =================================================
+
+        function getElement(id) {
+
+            return document.getElementById(id);
+
+        }
+
+
+
+        // =================================================
+        // STATUS MESSAGE
+        // =================================================
+
+        function showStatus(
+            message,
+            type = "info"
+        ) {
+
+            const status =
+                getElement("mainStatus");
+
+            if (!status) {
+                return;
+            }
+
+            status.innerText =
+                message;
+
+            status.className =
+                "status-box " + type;
+
+        }
+
+
+
+        // =================================================
+        // GPS LOCATION
+        // =================================================
+
+        function detectLocation() {
+
+            const locationStatus =
+                getElement(
+                    "locationStatus"
+                );
+
+
+            if (!navigator.geolocation) {
+
+                locationStatus.innerText =
+                    "❌ Geolocation is not supported by this browser.";
+
+                locationStatus.className =
+                    "location-box error";
+
+                return;
+            }
+
+
+            locationStatus.innerText =
+                "📍 Detecting your location...";
+
+
+            locationStatus.className =
+                "location-box warning";
+
+
+            const locationBtn =
+                getElement(
+                    "locationBtn"
+                );
+
+
+            if (locationBtn) {
+
+                locationBtn.disabled =
+                    true;
+
+                locationBtn.innerText =
+                    "📍 Detecting Location...";
+
+            }
+
+
+            navigator.geolocation.getCurrentPosition(
+
+                function(position) {
+
+                    farmerLatitude =
+                        position.coords.latitude;
+
+                    farmerLongitude =
+                        position.coords.longitude;
+
+                    farmerGPSAccuracy =
+                        position.coords.accuracy;
+
+
+                    console.log(
+                        "GPS Latitude:",
+                        farmerLatitude
+                    );
+
+                    console.log(
+                        "GPS Longitude:",
+                        farmerLongitude
+                    );
+
+                    console.log(
+                        "GPS Accuracy:",
+                        farmerGPSAccuracy,
+                        "meters"
+                    );
+
+
+                    /*
+                     * Reject obviously inaccurate
+                     * GPS coordinates.
+                     */
+
+                    if (
+                        !Number.isFinite(
+                            farmerLatitude
+                        ) ||
+                        !Number.isFinite(
+                            farmerLongitude
+                        ) ||
+                        !Number.isFinite(
+                            farmerGPSAccuracy
+                        )
+                    ) {
+
+                        locationStatus.innerText =
+                            "❌ Invalid GPS information received.";
+
+                        locationStatus.className =
+                            "location-box error";
+
+
+                        farmerLatitude =
+                            null;
+
+                        farmerLongitude =
+                            null;
+
+                        farmerGPSAccuracy =
+                            null;
+
+                        return;
+
+                    }
+
+
+                    if (
+                        farmerGPSAccuracy >
+                        5000
+                    ) {
+
+                        locationStatus.innerHTML =
+                            "⚠️ GPS accuracy is too low (" +
+                            farmerGPSAccuracy.toFixed(0) +
+                            " m). Please move outdoors or enable high-accuracy location and try again.";
+
+                        locationStatus.className =
+                            "location-box warning";
+
+
+                        farmerLatitude =
+                            null;
+
+                        farmerLongitude =
+                            null;
+
+                        farmerGPSAccuracy =
+                            null;
+
+                        return;
+
+                    }
+
+
+                    locationStatus.innerHTML =
+                        "✅ Location detected successfully.<br>" +
+                        "Latitude: " +
+                        farmerLatitude.toFixed(6) +
+                        "<br>" +
+                        "Longitude: " +
+                        farmerLongitude.toFixed(6) +
+                        "<br>" +
+                        "Accuracy: approximately " +
+                        farmerGPSAccuracy.toFixed(0) +
+                        " m";
+
+
+                    locationStatus.className =
+                        "location-box success";
+
+                },
+
+
+                function(error) {
+
+                    console.error(
+                        "GPS Error:",
+                        error
+                    );
+
+
+                    farmerLatitude =
+                        null;
+
+                    farmerLongitude =
+                        null;
+
+                    farmerGPSAccuracy =
+                        null;
+
+
+                    let message =
+                        "❌ Unable to detect your location.";
+
+
+                    if (
+                        error.code ===
+                        error.PERMISSION_DENIED
+                    ) {
+
+                        message =
+                            "❌ Location permission was denied. Please allow location access in your browser.";
+
+                    }
+                    else if (
+                        error.code ===
+                        error.POSITION_UNAVAILABLE
+                    ) {
+
+                        message =
+                            "❌ Location information is unavailable. Please check GPS/location services.";
+
+                    }
+                    else if (
+                        error.code ===
+                        error.TIMEOUT
+                    ) {
+
+                        message =
+                            "❌ Location request timed out. Please try again.";
+
+                    }
+
+
+                    locationStatus.innerText =
+                        message;
+
+                    locationStatus.className =
+                        "location-box error";
+
+                },
+
+
+                {
+                    enableHighAccuracy: true,
+
+                    timeout: 30000,
+
+                    maximumAge: 0
+
+                }
+
+            );
+
+
+            if (locationBtn) {
+
+                setTimeout(
+                    function() {
+
+                        locationBtn.disabled =
+                            false;
+
+                        locationBtn.innerText =
+                            "📍 Detect My Location";
+
+                    },
+                    1000
+                );
+
+            }
+
+        }
+
+
+
+        // =================================================
+        // NUMBER FORMATTER
+        // =================================================
+
+        function formatRupees(value) {
+
+            const number =
+                Number(value || 0);
+
+
+            return (
+                "₹" +
+                number.toLocaleString(
+                    "en-IN",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                )
+            );
+
+        }
+
+
+
+        // =================================================
+        // SAFE NUMBER
+        // =================================================
+
+        function safeNumber(value) {
+
+            const number =
+                Number(value);
+
+
+            if (
+                !Number.isFinite(number)
+            ) {
+
+                return 0;
+
+            }
+
+
+            return number;
+
+        }
+
+
+
+        // =================================================
+        // EVENT: LOCATION BUTTON
+        // =================================================
+
+        const locationBtn =
+            getElement(
+                "locationBtn"
+            );
+
+
+        if (locationBtn) {
+
+            locationBtn.addEventListener(
+                "click",
+                detectLocation
+            );
+
+        }
+        // =================================================
+        // FIND BEST MARKET
+        // =================================================
+
+        async function findBestMarket() {
+
+            const cropElement =
+                getElement("crop");
+
+            const quantityElement =
+                getElement("quantity");
+
+            const findButton =
+                getElement("findMarketBtn");
+
+
+            const crop =
+                cropElement
+                    ? cropElement.value.trim()
+                    : "";
+
+
+            const quantity =
+                quantityElement
+                    ? Number(quantityElement.value)
+                    : 0;
+
+
+            // ---------------------------------------------
+            // VALIDATION
+            // ---------------------------------------------
+
+            if (!crop) {
+
+                showStatus(
+                    "⚠️ Please select a crop first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Number.isFinite(quantity) ||
+                quantity <= 0
+            ) {
+
+                showStatus(
+                    "⚠️ Please enter a valid quantity in kg.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                farmerLatitude === null ||
+                farmerLongitude === null
+            ) {
+
+                showStatus(
+                    "⚠️ Please detect your GPS location first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // BUTTON STATE
+            // ---------------------------------------------
+
+            if (findButton) {
+
+                findButton.disabled =
+                    true;
+
+                findButton.innerText =
+                    "🔎 Finding Markets...";
+
+            }
+
+
+            showStatus(
+                "🔎 Analyzing available markets...",
+                "info"
+            );
+
+
+            try {
+
+                // -----------------------------------------
+                // BACKEND API URL
+                // -----------------------------------------
+
+                const url =
+                    "http://127.0.0.1:8000/partial-selling" +
+                    "?crop_name=" +
+                    encodeURIComponent(crop) +
+                    "&quantity_kg=" +
+                    quantity +
+                    "&farmer_latitude=" +
+                    farmerLatitude +
+                    "&farmer_longitude=" +
+                    farmerLongitude;
+
+
+                console.log(
+                    "API Request:",
+                    url
+                );
+
+
+                // -----------------------------------------
+                // API REQUEST
+                // -----------------------------------------
+
+                const response =
+                    await fetch(
+                        url,
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                console.log(
+                    "API Status:",
+                    response.status
+                );
+
+
+                if (!response.ok) {
+
+                    let errorMessage =
+                        "Backend request failed.";
+
+
+                    try {
+
+                        const errorData =
+                            await response.json();
+
+
+                        if (
+                            errorData.detail
+                        ) {
+
+                            errorMessage =
+                                errorData.detail;
+
+                        }
+
+                    }
+                    catch (jsonError) {
+
+                        console.warn(
+                            "Could not read error response."
+                        );
+
+                    }
+
+
+                    throw new Error(
+                        errorMessage
+                    );
+
+                }
+
+
+                // -----------------------------------------
+                // READ RESPONSE
+                // -----------------------------------------
+
+                const result =
+                    await response.json();
+
+
+                console.log(
+                    "Backend Result:",
+                    result
+                );
+
+
+                // -----------------------------------------
+                // VALIDATE RESULT
+                // -----------------------------------------
+
+                if (
+                    !result ||
+                    !Array.isArray(
+                        result.markets
+                    )
+                ) {
+
+                    throw new Error(
+                        "Backend returned an invalid market response."
+                    );
+
+                }
+
+
+                if (
+                    result.markets.length === 0
+                ) {
+
+                    throw new Error(
+                        "No suitable markets were found for this crop and location."
+                    );
+
+                }
+
+
+                // -----------------------------------------
+                // SAVE CURRENT MARKETS
+                // -----------------------------------------
+
+                currentMarkets =
+                    result.markets;
+
+
+                // -----------------------------------------
+                // SAVE PRICE DATA
+                // -----------------------------------------
+
+                currentPriceData =
+                    result.markets.map(
+                        function(market) {
+
+                            return {
+
+                                market_name:
+                                    market.market_name,
+
+                                price:
+                                    safeNumber(
+                                        market.price_per_quintal ??
+                                        market.modal_price
+                                    ),
+
+                                distance:
+                                    safeNumber(
+                                        market.distance_km
+                                    ),
+
+                                netPerKg:
+                                    safeNumber(
+                                        market.net_realisation_per_kg
+                                    )
+
+                            };
+
+                        }
+                    );
+
+
+                // -----------------------------------------
+                // DISPLAY RESULTS
+                // -----------------------------------------
+
+                displayMarketResults(
+                    result
+                );
+
+
+                displayComparison();
+
+
+                displaySellingPlan(
+                    result
+                );
+
+
+                updateStrategy(
+                    result
+                );
+
+
+                createCharts();
+
+
+                // -----------------------------------------
+                // ADAPTIVE RECOMMENDATION
+                // -----------------------------------------
+
+                analyzePreviousSale(
+                    result
+                );
+
+
+                showStatus(
+                    "✅ Market analysis completed successfully.",
+                    "success"
+                );
+
+
+                // -----------------------------------------
+                // SCROLL TO RESULTS
+                // -----------------------------------------
+
+                const resultsSection =
+                    getElement(
+                        "resultsSection"
+                    );
+
+
+                if (resultsSection) {
+
+                    resultsSection.scrollIntoView(
+                        {
+                            behavior: "smooth",
+                            block: "start"
+                        }
+                    );
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Market Analysis Error:",
+                    error
+                );
+
+
+                showStatus(
+                    "❌ " +
+                    (
+                        error.message ||
+                        "Unable to complete market analysis."
+                    ),
+                    "error"
+                );
+
+            }
+            finally {
+
+                if (findButton) {
+
+                    findButton.disabled =
+                        false;
+
+                    findButton.innerText =
+                        "🔎 Find Best Market";
+
+                }
+
+            }
+
+        }
+
+
+
+        // =================================================
+        // DISPLAY MARKET RESULTS
+        // =================================================
+
+        function displayMarketResults(
+            result
+        ) {
+
+            const resultsSection =
+                getElement(
+                    "resultsSection"
+                );
+
+
+            const bestMarketElement =
+                getElement(
+                    "bestMarket"
+                );
+
+
+            const bestNetElement =
+                getElement(
+                    "bestNetPerKg"
+                );
+
+
+            const totalNetElement =
+                getElement(
+                    "totalNet"
+                );
+
+
+            const totalCostElement =
+                getElement(
+                    "totalCost"
+                );
+
+
+            const reasonElement =
+                getElement(
+                    "recommendationReason"
+                );
+
+
+            const marketCards =
+                getElement(
+                    "marketCards"
+                );
+
+
+            if (!resultsSection) {
+
+                console.error(
+                    "Results section not found."
+                );
+
+                return;
+
+            }
+
+
+            const markets =
+                Array.isArray(
+                    result.markets
+                )
+                    ? result.markets
+                    : [];
+
+
+            // ---------------------------------------------
+            // FIND BEST MARKET
+            // ---------------------------------------------
+
+            let bestMarket =
+                result.best_market ||
+                "-";
+
+
+            let bestNet =
+                safeNumber(
+                    result.best_net_realisation_per_kg
+                );
+
+
+            // If backend does not provide best market,
+            // calculate it from returned markets.
+
+            if (
+                bestMarket === "-" &&
+                markets.length > 0
+            ) {
+
+                const best =
+                    markets.reduce(
+                        function(current, market) {
+
+                            if (!current) {
+                                return market;
+                            }
+
+                            return (
+                                safeNumber(
+                                    market.net_realisation_per_kg
+                                ) >
+                                safeNumber(
+                                    current.net_realisation_per_kg
+                                )
+                            )
+                                ? market
+                                : current;
+
+                        },
+                        null
+                    );
+
+
+                if (best) {
+
+                    bestMarket =
+                        best.market_name;
+
+                    bestNet =
+                        safeNumber(
+                            best.net_realisation_per_kg
+                        );
+
+                }
+
+            }
+
+
+            // ---------------------------------------------
+            // SUMMARY VALUES
+            // ---------------------------------------------
+
+            if (bestMarketElement) {
+
+                bestMarketElement.innerText =
+                    bestMarket;
+
+            }
+
+
+            if (bestNetElement) {
+
+                bestNetElement.innerText =
+                    formatRupees(
+                        bestNet
+                    );
+
+            }
+
+
+            if (totalNetElement) {
+
+                totalNetElement.innerText =
+                    formatRupees(
+                        result.total_net_realisation
+                    );
+
+            }
+
+
+            if (totalCostElement) {
+
+                totalCostElement.innerText =
+                    formatRupees(
+                        result.total_cost
+                    );
+
+            }
+
+
+            if (reasonElement) {
+
+                reasonElement.innerText =
+                    result.recommendation_reason ||
+                    "KisanLink recommends the feasible market combination with the best expected net return.";
+
+            }
+
+
+            // ---------------------------------------------
+            // MARKET CARDS
+            // ---------------------------------------------
+
+            if (marketCards) {
+
+                marketCards.innerHTML = "";
+
+
+                markets.forEach(
+                    function(market) {
+
+                        const card =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        const isBest =
+                            market.market_name ===
+                            bestMarket;
+
+
+                        card.className =
+                            "market-card" +
+                            (
+                                isBest
+                                    ? " best-market"
+                                    : ""
+                            );
+
+
+                        const price =
+                            safeNumber(
+                                market.price_per_quintal ??
+                                market.modal_price
+                            );
+
+
+                        const distance =
+                            safeNumber(
+                                market.distance_km
+                            );
+
+
+                        const netPerKg =
+                            safeNumber(
+                                market.net_realisation_per_kg
+                            );
+
+
+                        const quantity =
+                            safeNumber(
+                                market.quantity_kg
+                            );
+
+
+                        const netRealisation =
+                            safeNumber(
+                                market.net_realisation
+                            );
+
+
+                        const transportCost =
+                            safeNumber(
+                                market.transport_cost
+                            );
+
+
+                        const marketCharges =
+                            safeNumber(
+                                market.market_charges
+                            );
+
+
+                        const otherCosts =
+                            safeNumber(
+                                market.other_costs
+                            );
+
+
+                        card.innerHTML = `
+
+                            <h3>
+                                ${isBest ? "🏆 " : "🏪 "}
+                                ${market.market_name}
+                            </h3>
+
+                            <p>
+                                <strong>
+                                    Price:
+                                </strong>
+                                ₹${price.toFixed(0)}/quintal
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Distance:
+                                </strong>
+                                ${distance.toFixed(2)} km
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Quantity:
+                                </strong>
+                                ${quantity.toFixed(0)} kg
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Transport Cost:
+                                </strong>
+                                ${formatRupees(transportCost)}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Market Charges:
+                                </strong>
+                                ${formatRupees(marketCharges)}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Other Costs:
+                                </strong>
+                                ${formatRupees(otherCosts)}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Net Realisation:
+                                </strong>
+                                ${formatRupees(netRealisation)}
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Net Realisation / kg:
+                                </strong>
+                                ${formatRupees(netPerKg)}
+                            </p>
+
+                            ${
+                                isBest
+                                    ? `
+                                        <div
+                                            class="recommendation-box"
+                                        >
+                                            🏆 Best feasible
+                                            net return
+                                        </div>
+                                      `
+                                    : ""
+                            }
+
+                        `;
+
+
+                        marketCards.appendChild(
+                            card
+                        );
+
+                    }
+                );
+
+            }
+
+
+            resultsSection.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+
+        // =================================================
+        // FIND MARKET BUTTON
+        // =================================================
+
+        const findMarketBtn =
+            getElement(
+                "findMarketBtn"
+            );
+
+
+        if (findMarketBtn) {
+
+            findMarketBtn.addEventListener(
+                "click",
+                findBestMarket
+            );
+
+        }
+        // =================================================
+        // UPDATE SELLING STRATEGY
+        // =================================================
+
+        function updateStrategy(result) {
+
+            const strategySection =
+                getElement(
+                    "strategySection"
+                );
+
+            const strategyMarket =
+                getElement(
+                    "strategyMarket"
+                );
+
+            const strategyQuantity =
+                getElement(
+                    "strategyQuantity"
+                );
+
+            const strategyReturn =
+                getElement(
+                    "strategyReturn"
+                );
+
+            const strategyPerKg =
+                getElement(
+                    "strategyPerKg"
+                );
+
+            const strategyReason =
+                getElement(
+                    "strategyReason"
+                );
+
+
+            if (!strategySection) {
+                return;
+            }
+
+
+            if (strategyMarket) {
+
+                strategyMarket.innerText =
+                    result.best_market || "-";
+
+            }
+
+
+            const best =
+                currentMarkets.find(
+                    function(market) {
+
+                        return (
+                            market.market_name ===
+                            result.best_market
+                        );
+
+                    }
+                );
+
+
+            if (best) {
+
+                if (strategyQuantity) {
+
+                    strategyQuantity.innerText =
+                        safeNumber(
+                            best.quantity_kg
+                        ).toFixed(0) +
+                        " kg";
+
+                }
+
+
+                if (strategyReturn) {
+
+                    strategyReturn.innerText =
+                        formatRupees(
+                            best.net_realisation
+                        );
+
+                }
+
+
+                if (strategyPerKg) {
+
+                    strategyPerKg.innerText =
+                        formatRupees(
+                            best.net_realisation_per_kg
+                        );
+
+                }
+
+            }
+
+
+            if (strategyReason) {
+
+                strategyReason.innerText =
+                    result.recommendation_reason ||
+                    "KisanLink recommends the market combination that provides the best expected net return after transport, market charges and other costs.";
+
+            }
+
+
+            strategySection.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+
+        // =================================================
+        // DISPLAY SELLING PLAN
+        // =================================================
+
+        function displaySellingPlan(
+            result
+        ) {
+
+            const section =
+                getElement(
+                    "sellingPlanSection"
+                );
+
+            const summary =
+                getElement(
+                    "sellingPlanSummary"
+                );
+
+            const body =
+                getElement(
+                    "sellingPlanBody"
+                );
+
+
+            if (
+                !section ||
+                !summary ||
+                !body
+            ) {
+
+                console.error(
+                    "Selling Plan elements not found."
+                );
+
+                return;
+
+            }
+
+
+            body.innerHTML = "";
+
+
+            const split =
+                result.recommended_split ||
+                {};
+
+
+            const totalQuantity =
+                safeNumber(
+                    result.total_quantity_kg
+                );
+
+
+            const activeMarkets = [];
+
+
+            Object.entries(
+                split
+            ).forEach(
+                function(
+                    [
+                        marketName,
+                        percentage
+                    ]
+                ) {
+
+                    const percent =
+                        safeNumber(
+                            percentage
+                        );
+
+
+                    if (
+                        percent <= 0
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const quantity =
+                        totalQuantity *
+                        percent /
+                        100;
+
+
+                    activeMarkets.push({
+
+                        name:
+                            marketName,
+
+                        quantity:
+                            quantity,
+
+                        percentage:
+                            percent
+
+                    });
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            🏪 ${marketName}
+                        </td>
+
+                        <td>
+                            ${quantity.toFixed(0)} kg
+                        </td>
+
+                        <td>
+                            ${percent.toFixed(0)}%
+                        </td>
+
+                    `;
+
+
+                    body.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+
+            // ---------------------------------------------
+            // SUMMARY
+            // ---------------------------------------------
+
+            if (
+                activeMarkets.length === 0
+            ) {
+
+                summary.innerHTML =
+                    "⚠️ No recommended selling allocation available.";
+
+            }
+            else if (
+                activeMarkets.length === 1
+            ) {
+
+                summary.innerHTML =
+                    `🌾 Sell your entire <strong>${totalQuantity.toFixed(0)} kg</strong> at <strong>${activeMarkets[0].name}</strong>.`;
+
+            }
+            else {
+
+                let planText =
+                    `🌾 KisanLink recommends splitting <strong>${totalQuantity.toFixed(0)} kg</strong> across <strong>${activeMarkets.length} markets</strong>:<br><br>`;
+
+
+                activeMarkets.forEach(
+                    function(market) {
+
+                        planText +=
+                            `🏪 <strong>${market.name}</strong> → ${market.quantity.toFixed(0)} kg (${market.percentage.toFixed(0)}%)<br>`;
+
+                    }
+                );
+
+
+                summary.innerHTML =
+                    planText;
+
+            }
+
+
+            section.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+
+        // =================================================
+        // MARKET COMPARISON TABLE
+        // =================================================
+
+        function displayComparison() {
+
+            const tableBody =
+                getElement(
+                    "comparisonTableBody"
+                );
+
+
+            if (!tableBody) {
+                return;
+            }
+
+
+            tableBody.innerHTML = "";
+
+
+            if (
+                currentMarkets.length === 0
+            ) {
+
+                tableBody.innerHTML = `
+
+                    <tr>
+
+                        <td colspan="5">
+                            No market data available.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+
+            const bestMarketElement =
+                getElement(
+                    "bestMarket"
+                );
+
+
+            const bestMarketName =
+                bestMarketElement
+                    ? bestMarketElement.innerText
+                    : "";
+
+
+            currentMarkets.forEach(
+                function(market) {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    const isBest =
+                        market.market_name ===
+                        bestMarketName;
+
+
+                    if (isBest) {
+
+                        row.classList.add(
+                            "best-row"
+                        );
+
+                    }
+
+
+                    const price =
+                        safeNumber(
+                            market.price_per_quintal ??
+                            market.modal_price
+                        );
+
+
+                    const distance =
+                        safeNumber(
+                            market.distance_km
+                        );
+
+
+                    const netPerKg =
+                        safeNumber(
+                            market.net_realisation_per_kg
+                        );
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${market.market_name}
+                        </td>
+
+                        <td>
+                            ₹${price.toFixed(0)}
+                        </td>
+
+                        <td>
+                            ${distance.toFixed(2)} km
+                        </td>
+
+                        <td>
+                            ₹${netPerKg.toFixed(2)}
+                        </td>
+
+                        <td>
+                            ${
+                                isBest
+                                    ? "🏆 Yes"
+                                    : "—"
+                            }
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+        // =================================================
+        // CREATE CHARTS
+        // =================================================
+
+        function createCharts() {
+
+            if (
+                typeof Chart ===
+                "undefined"
+            ) {
+
+                console.error(
+                    "Chart.js is not loaded."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Array.isArray(
+                    currentMarkets
+                ) ||
+                currentMarkets.length === 0
+            ) {
+
+                console.warn(
+                    "No market data available for charts."
+                );
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // DESTROY OLD CHARTS
+            // ---------------------------------------------
+
+            if (
+                netRealisationChart
+            ) {
+
+                netRealisationChart.destroy();
+
+                netRealisationChart =
+                    null;
+
+            }
+
+
+            if (
+                allocationChart
+            ) {
+
+                allocationChart.destroy();
+
+                allocationChart =
+                    null;
+
+            }
+
+
+            const netCanvas =
+                getElement(
+                    "netRealisationChart"
+                );
+
+
+            const allocationCanvas =
+                getElement(
+                    "allocationChart"
+                );
+
+
+            if (
+                !netCanvas ||
+                !allocationCanvas
+            ) {
+
+                console.error(
+                    "Chart canvas elements not found."
+                );
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // MARKET NAMES
+            // ---------------------------------------------
+
+            const labels =
+                currentMarkets.map(
+                    function(market) {
+
+                        return market.market_name;
+
+                    }
+                );
+
+
+            // ---------------------------------------------
+            // NET REALISATION DATA
+            // ---------------------------------------------
+
+            const netData =
+                currentMarkets.map(
+                    function(market) {
+
+                        return safeNumber(
+                            market.net_realisation_per_kg
+                        );
+
+                    }
+                );
+
+
+            // ---------------------------------------------
+            // ALLOCATION DATA
+            // ---------------------------------------------
+
+            const quantityData =
+                currentMarkets.map(
+                    function(market) {
+
+                        return safeNumber(
+                            market.quantity_kg
+                        );
+
+                    }
+                );
+
+
+            // ---------------------------------------------
+            // BAR CHART
+            // ---------------------------------------------
+
+            netRealisationChart =
+                new Chart(
+                    netCanvas.getContext("2d"),
+                    {
+
+                        type: "bar",
+
+                        data: {
+
+                            labels:
+                                labels,
+
+                            datasets: [
+
+                                {
+
+                                    label:
+                                        "Net Realisation / kg",
+
+                                    data:
+                                        netData
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    display:
+                                        true
+
+                                },
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label:
+                                            function(context) {
+
+                                                return (
+                                                    " ₹" +
+                                                    Number(
+                                                        context.raw || 0
+                                                    ).toFixed(2) +
+                                                    " / kg"
+                                                );
+
+                                            }
+
+                                    }
+
+                                }
+
+                            },
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero:
+                                        true,
+
+                                    title: {
+
+                                        display:
+                                            true,
+
+                                        text:
+                                            "₹ per kg"
+
+                                    }
+
+                                },
+
+                                x: {
+
+                                    title: {
+
+                                        display:
+                                            true,
+
+                                        text:
+                                            "Market"
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+            // ---------------------------------------------
+            // DOUGHNUT CHART
+            // ---------------------------------------------
+
+            allocationChart =
+                new Chart(
+                    allocationCanvas.getContext("2d"),
+                    {
+
+                        type:
+                            "doughnut",
+
+                        data: {
+
+                            labels:
+                                labels,
+
+                            datasets: [
+
+                                {
+
+                                    label:
+                                        "Quantity Allocation",
+
+                                    data:
+                                        quantityData
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    display:
+                                        true,
+
+                                    position:
+                                        "bottom"
+
+                                },
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label:
+                                            function(context) {
+
+                                                return (
+                                                    " " +
+                                                    context.label +
+                                                    ": " +
+                                                    Number(
+                                                        context.raw || 0
+                                                    ).toFixed(0) +
+                                                    " kg"
+                                                );
+
+                                            }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+            console.log(
+                "✅ Charts created successfully."
+            );
+
+        }
+
+
+
+        // =================================================
+        // PROFIT CALCULATOR
+        // =================================================
+
+        function calculateProfit() {
+
+            const quantity =
+                safeNumber(
+                    getElement(
+                        "profitQuantity"
+                    )?.value
+                );
+
+
+            const price =
+                safeNumber(
+                    getElement(
+                        "profitPrice"
+                    )?.value
+                );
+
+
+            const otherCost =
+                safeNumber(
+                    getElement(
+                        "profitOtherCost"
+                    )?.value
+                );
+
+
+            // ---------------------------------------------
+            // VALIDATION
+            // ---------------------------------------------
+
+            if (
+                quantity <= 0
+            ) {
+
+                alert(
+                    "Please enter a valid quantity."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                price < 0
+            ) {
+
+                alert(
+                    "Please enter a valid selling price."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                otherCost < 0
+            ) {
+
+                alert(
+                    "Please enter a valid other cost."
+                );
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // CALCULATIONS
+            // ---------------------------------------------
+
+            const grossValue =
+                quantity *
+                (
+                    price /
+                    100
+                );
+
+
+            const totalCost =
+                quantity *
+                otherCost;
+
+
+            const netProfit =
+                grossValue -
+                totalCost;
+
+
+            const netPerKg =
+                netProfit /
+                quantity;
+
+
+            // ---------------------------------------------
+            // DISPLAY RESULTS
+            // ---------------------------------------------
+
+            const grossElement =
+                getElement(
+                    "profitGrossValue"
+                );
+
+
+            const costElement =
+                getElement(
+                    "profitTotalCost"
+                );
+
+
+            const netElement =
+                getElement(
+                    "profitNetProfit"
+                );
+
+
+            const perKgElement =
+                getElement(
+                    "profitNetPerKg"
+                );
+
+
+            if (grossElement) {
+
+                grossElement.innerText =
+                    formatRupees(
+                        grossValue
+                    );
+
+            }
+
+
+            if (costElement) {
+
+                costElement.innerText =
+                    formatRupees(
+                        totalCost
+                    );
+
+            }
+
+
+            if (netElement) {
+
+                netElement.innerText =
+                    formatRupees(
+                        netProfit
+                    );
+
+            }
+
+
+            if (perKgElement) {
+
+                perKgElement.innerText =
+                    formatRupees(
+                        netPerKg
+                    );
+
+            }
+
+
+            const resultBox =
+                getElement(
+                    "profitResult"
+                );
+
+
+            if (resultBox) {
+
+                resultBox.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+
+            console.log(
+                "Profit calculation:",
+                {
+                    quantity:
+                        quantity,
+
+                    price:
+                        price,
+
+                    otherCost:
+                        otherCost,
+
+                    grossValue:
+                        grossValue,
+
+                    totalCost:
+                        totalCost,
+
+                    netProfit:
+                        netProfit,
+
+                    netPerKg:
+                        netPerKg
+                }
+            );
+
+        }
+
+
+
+        // =================================================
+        // PROFIT CALCULATOR BUTTON
+        // =================================================
+
+        const calculateProfitBtn =
+            getElement(
+                "calculateProfitBtn"
+            );
+
+
+        if (
+            calculateProfitBtn
+        ) {
+
+            calculateProfitBtn.addEventListener(
+                "click",
+                calculateProfit
+            );
+
+        }
+        // =================================================
+        // SAVE PREVIOUS SALE
+        // =================================================
+
+        function savePreviousSale(
+            saleData
+        ) {
+
+            try {
+
+                localStorage.setItem(
+                    "kisanlink_previous_sale",
+                    JSON.stringify(
+                        saleData
+                    )
+                );
+
+                console.log(
+                    "✅ Previous sale saved."
+                );
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Could not save previous sale:",
+                    error
+                );
+
+            }
+
+        }
+
+
+
+        // =================================================
+        // LOAD PREVIOUS SALE
+        // =================================================
+
+        function loadPreviousSale() {
+
+            try {
+
+                const saved =
+                    localStorage.getItem(
+                        "kisanlink_previous_sale"
+                    );
+
+
+                if (!saved) {
+
+                    return null;
+
+                }
+
+
+                return JSON.parse(
+                    saved
+                );
+
+            }
+            catch (error) {
+
+                console.warn(
+                    "Could not load previous sale:",
+                    error
+                );
+
+
+                return null;
+
+            }
+
+        }
+
+
+
+        // =================================================
+        // ANALYZE PREVIOUS SALE
+        // =================================================
+
+        function analyzePreviousSale(
+            result
+        ) {
+
+            const previous =
+                loadPreviousSale();
+
+
+            const adaptiveResult =
+                getElement(
+                    "adaptiveResult"
+                );
+
+
+            const adaptiveSummary =
+                getElement(
+                    "adaptiveSummary"
+                );
+
+
+            if (
+                !adaptiveResult ||
+                !adaptiveSummary
+            ) {
+
+                return;
+
+            }
+
+
+            if (!previous) {
+
+                adaptiveSummary.innerHTML = `
+
+                    <p>
+                        ℹ️ No previous sale data is saved yet.
+                    </p>
+
+                    <p style="margin-top: 10px;">
+                        Enter your previous sale details below
+                        and click <strong>Analyze Previous Sale</strong>
+                        to create a baseline for future recommendations.
+                    </p>
+
+                `;
+
+
+                adaptiveResult.classList.remove(
+                    "hidden"
+                );
+
+
+                return;
+
+            }
+
+
+            const previousQuantity =
+                safeNumber(
+                    previous.quantity
+                );
+
+
+            const previousPrice =
+                safeNumber(
+                    previous.price
+                );
+
+
+            const previousTransport =
+                safeNumber(
+                    previous.transportCost
+                );
+
+
+            const previousOtherCosts =
+                safeNumber(
+                    previous.otherCosts
+                );
+
+
+            if (
+                previousQuantity <= 0
+            ) {
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // PREVIOUS SALE CALCULATION
+            // ---------------------------------------------
+
+            const previousGross =
+                previousQuantity *
+                (
+                    previousPrice /
+                    100
+                );
+
+
+            const previousNet =
+                previousGross -
+                previousTransport -
+                previousOtherCosts;
+
+
+            const previousNetPerKg =
+                previousNet /
+                previousQuantity;
+
+
+            // ---------------------------------------------
+            // TODAY'S BEST NET / KG
+            // ---------------------------------------------
+
+            let todayBestNetPerKg =
+                safeNumber(
+                    result.best_net_realisation_per_kg
+                );
+
+
+            if (
+                todayBestNetPerKg <= 0 &&
+                Array.isArray(
+                    result.markets
+                ) &&
+                result.markets.length > 0
+            ) {
+
+                todayBestNetPerKg =
+                    Math.max(
+                        ...result.markets.map(
+                            function(market) {
+
+                                return safeNumber(
+                                    market.net_realisation_per_kg
+                                );
+
+                            }
+                        )
+                    );
+
+            }
+
+
+            const improvementPerKg =
+                todayBestNetPerKg -
+                previousNetPerKg;
+
+
+            const potentialExtraReturn =
+                improvementPerKg *
+                previousQuantity;
+
+
+            // ---------------------------------------------
+            // INSIGHT FLAGS
+            // ---------------------------------------------
+
+            const highTransport =
+                previousTransport >
+                previousGross *
+                0.10;
+
+
+            const betterToday =
+                improvementPerKg >
+                0.01;
+
+
+            const worseToday =
+                improvementPerKg <
+                -0.01;
+
+
+            const multipleMarkets =
+                Array.isArray(
+                    result.markets
+                ) &&
+                result.markets.filter(
+                    function(market) {
+
+                        return safeNumber(
+                            market.quantity_kg
+                        ) > 0;
+
+                    }
+                ).length > 1;
+
+
+            // ---------------------------------------------
+            // BUILD RECOMMENDATION
+            // ---------------------------------------------
+
+            let insight =
+                "";
+
+
+            if (betterToday) {
+
+                insight +=
+                    "📈 Today's opportunity provides a higher expected net return per kg than your previous sale. ";
+
+            }
+            else if (worseToday) {
+
+                insight +=
+                    "⚠️ Today's best expected net return per kg is lower than your previous sale. ";
+
+            }
+            else {
+
+                insight +=
+                    "➡️ Today's expected net return is broadly similar to your previous sale. ";
+
+            }
+
+
+            if (highTransport) {
+
+                insight +=
+                    "🚚 Your previous transport cost was relatively high, so a closer market may help reduce selling costs. ";
+
+            }
+
+
+            if (multipleMarkets) {
+
+                insight +=
+                    "📦 The current market analysis also supports a multi-market allocation, which can help distribute the produce when market capacities make a split feasible. ";
+
+            }
+
+
+            if (
+                betterToday &&
+                potentialExtraReturn > 0
+            ) {
+
+                insight +=
+                    "💰 If you sold a similar quantity at today's best expected net return, the potential improvement would be approximately " +
+                    formatRupees(
+                        potentialExtraReturn
+                    ) +
+                    ".";
+
+            }
+
+
+            adaptiveSummary.innerHTML = `
+
+                <div class="card-grid">
+
+                    <div class="info-card">
+
+                        <h3>
+                            Previous Net / kg
+                        </h3>
+
+                        <div class="value">
+                            ${formatRupees(
+                                previousNetPerKg
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <h3>
+                            Today's Best Net / kg
+                        </h3>
+
+                        <div class="value">
+                            ${formatRupees(
+                                todayBestNetPerKg
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <h3>
+                            Improvement / kg
+                        </h3>
+
+                        <div class="value">
+                            ${formatRupees(
+                                improvementPerKg
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-card">
+
+                        <h3>
+                            Potential Extra Return
+                        </h3>
+
+                        <div class="value">
+                            ${formatRupees(
+                                potentialExtraReturn
+                            )}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="recommendation-box"
+                    style="margin-top: 20px;"
+                >
+
+                    <h3>
+                        💡 KisanLink Insight
+                    </h3>
+
+                    <p>
+                        ${insight}
+                    </p>
+
+                </div>
+
+
+                <p
+                    style="
+                        margin-top: 15px;
+                        font-size: 13px;
+                        opacity: 0.75;
+                    "
+                >
+                    Previous sale:
+                    ${previous.crop || "-"}
+                    at
+                    ${previous.market || "-"}
+                    (${previousQuantity.toFixed(0)} kg)
+                </p>
+
+            `;
+
+
+            adaptiveResult.classList.remove(
+                "hidden"
+            );
+
+        }
+
+
+
+        // =================================================
+        // ANALYZE PREVIOUS SALE BUTTON
+        // =================================================
+
+        const analyzePreviousSaleBtn =
+            getElement(
+                "analyzePreviousSaleBtn"
+            );
+
+
+        if (
+            analyzePreviousSaleBtn
+        ) {
+
+            analyzePreviousSaleBtn.addEventListener(
+                "click",
+                function() {
+
+                    const crop =
+                        getElement(
+                            "previousCrop"
+                        )?.value.trim();
+
+
+                    const market =
+                        getElement(
+                            "previousMarket"
+                        )?.value.trim();
+
+
+                    const quantity =
+                        safeNumber(
+                            getElement(
+                                "previousQuantity"
+                            )?.value
+                        );
+
+
+                    const price =
+                        safeNumber(
+                            getElement(
+                                "previousPrice"
+                            )?.value
+                        );
+
+
+                    const transportCost =
+                        safeNumber(
+                            getElement(
+                                "previousTransport"
+                            )?.value
+                        );
+
+
+                    const otherCosts =
+                        safeNumber(
+                            getElement(
+                                "previousOtherCosts"
+                            )?.value
+                        );
+
+
+                    // -----------------------------------------
+                    // VALIDATION
+                    // -----------------------------------------
+
+                    if (!crop) {
+
+                        alert(
+                            "Please enter the previous crop."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (!market) {
+
+                        alert(
+                            "Please enter the previous market."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        quantity <= 0
+                    ) {
+
+                        alert(
+                            "Please enter a valid previous quantity."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        price < 0
+                    ) {
+
+                        alert(
+                            "Please enter a valid previous selling price."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        transportCost < 0 ||
+                        otherCosts < 0
+                    ) {
+
+                        alert(
+                            "Costs cannot be negative."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const saleData = {
+
+                        crop:
+                            crop,
+
+                        market:
+                            market,
+
+                        quantity:
+                            quantity,
+
+                        price:
+                            price,
+
+                        transportCost:
+                            transportCost,
+
+                        otherCosts:
+                            otherCosts,
+
+                        savedAt:
+                            new Date().toISOString()
+
+                    };
+
+
+                    // -----------------------------------------
+                    // SAVE TO LOCAL STORAGE
+                    // -----------------------------------------
+
+                    savePreviousSale(
+                        saleData
+                    );
+
+
+                    // -----------------------------------------
+                    // IF CURRENT ANALYSIS EXISTS,
+                    // COMPARE IMMEDIATELY
+                    // -----------------------------------------
+
+                    if (
+                        currentMarkets.length > 0
+                    ) {
+
+                        const temporaryResult = {
+
+                            markets:
+                                currentMarkets,
+
+                            best_net_realisation_per_kg:
+                                Math.max(
+                                    ...currentMarkets.map(
+                                        function(market) {
+
+                                            return safeNumber(
+                                                market.net_realisation_per_kg
+                                            );
+
+                                        }
+                                    )
+                                )
+
+                        };
+
+
+                        analyzePreviousSale(
+                            temporaryResult
+                        );
+
+                    }
+                    else {
+
+                        const adaptiveResult =
+                            getElement(
+                                "adaptiveResult"
+                            );
+
+
+                        const adaptiveSummary =
+                            getElement(
+                                "adaptiveSummary"
+                            );
+
+
+                        if (
+                            adaptiveResult &&
+                            adaptiveSummary
+                        ) {
+
+                            adaptiveSummary.innerHTML = `
+
+                                <p>
+                                    ✅ Previous sale saved successfully.
+                                </p>
+
+                                <p style="margin-top: 10px;">
+                                    Run today's market analysis to compare
+                                    this sale with current market opportunities.
+                                </p>
+
+                            `;
+
+
+                            adaptiveResult.classList.remove(
+                                "hidden"
+                            );
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+        // =================================================
+        // PAGE INITIALIZATION
+        // =================================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                console.log(
+                    "🌾 KisanLink loaded successfully."
+                );
+
+
+                // -----------------------------------------
+                // CHECK CHART.JS
+                // -----------------------------------------
+
+                if (
+                    typeof Chart ===
+                    "undefined"
+                ) {
+
+                    console.warn(
+                        "⚠️ Chart.js is not available."
+                    );
+
+                }
+                else {
+
+                    console.log(
+                        "✅ Chart.js loaded."
+                    );
+
+                }
+
+
+                // -----------------------------------------
+                // CHECK BACKEND
+                // -----------------------------------------
+
+                console.log(
+                    "Backend expected at:",
+                    "http://127.0.0.1:8000"
+                );
+
+
+                // -----------------------------------------
+                // LOAD PREVIOUS SALE INTO FORM
+                // -----------------------------------------
+
+                const previous =
+                    loadPreviousSale();
+
+
+                if (previous) {
+
+                    const previousCrop =
+                        getElement(
+                            "previousCrop"
+                        );
+
+                    const previousMarket =
+                        getElement(
+                            "previousMarket"
+                        );
+
+                    const previousQuantity =
+                        getElement(
+                            "previousQuantity"
+                        );
+
+                    const previousPrice =
+                        getElement(
+                            "previousPrice"
+                        );
+
+                    const previousTransport =
+                        getElement(
+                            "previousTransport"
+                        );
+
+                    const previousOtherCosts =
+                        getElement(
+                            "previousOtherCosts"
+                        );
+
+
+                    if (previousCrop) {
+
+                        previousCrop.value =
+                            previous.crop || "";
+
+                    }
+
+
+                    if (previousMarket) {
+
+                        previousMarket.value =
+                            previous.market || "";
+
+                    }
+
+
+                    if (previousQuantity) {
+
+                        previousQuantity.value =
+                            previous.quantity || "";
+
+                    }
+
+
+                    if (previousPrice) {
+
+                        previousPrice.value =
+                            previous.price || "";
+
+                    }
+
+
+                    if (previousTransport) {
+
+                        previousTransport.value =
+                            previous.transportCost || "";
+
+                    }
+
+
+                    if (previousOtherCosts) {
+
+                        previousOtherCosts.value =
+                            previous.otherCosts || "";
+
+                    }
+
+
+                    console.log(
+                        "✅ Previous sale data loaded."
+                    );
+
+                }
+
+            }
+        );
+        // LOGOUT
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener("click", function () {
+
+        localStorage.removeItem("kisanlink_logged_in");
+        localStorage.removeItem("kisanlink_farmer_name");
+
+        window.location.href = "login.html";
+
+    });
+
+}
+
+
+    </script>
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
+
+    <footer>
+
+        <p>
+            🌾 <strong>KisanLink</strong>
+        </p>
+
+        <p>
+            Strengthening market linkages and
+            price discovery for farmers.
+        </p>
+
+        <p>
+            SIH Prototype • Farmer Market Intelligence
+        </p>
+
+    </footer>
+
+
+</main>
+
+
+</body>
+
+</html>

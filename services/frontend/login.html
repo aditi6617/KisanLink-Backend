@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KisanLink | Farmer Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 430px;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 50px;
+        }
+
+        .logo h1 {
+            color: #2e7d32;
+            font-size: 34px;
+            margin-top: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            margin-top: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #1b5e20;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .signup {
+            text-align: center;
+            margin-top: 22px;
+            color: #666;
+        }
+
+        .signup a {
+            color: #2e7d32;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup a:hover {
+            text-decoration: underline;
+        }
+
+        .demo-note {
+            margin-top: 20px;
+            padding: 12px;
+            background: #f1f8e9;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <div class="logo-icon">🌾</div>
+        <h1>KisanLink</h1>
+        <p>Smart Farmer Market Linkage</p>
+    </div>
+
+    <h2>Farmer Login</h2>
+
+    <form id="loginForm">
+
+        <div class="form-group">
+            <label for="mobile">Mobile Number</label>
+
+            <input
+                type="tel"
+                id="mobile"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+            >
+        </div>
+
+        <button type="submit">
+            Login
+        </button>
+
+        <div class="message" id="message"></div>
+
+    </form>
+
+    <div class="signup">
+        New farmer?
+        <a href="signup.html">Create an account</a>
+    </div>
+
+    <div class="demo-note">
+        KisanLink Prototype • Farmer Market Linkage Platform
+    </div>
+
+</div>
+
+
+<script>
+
+    // If farmer is already logged in,
+    // directly open the KisanLink prototype.
+    if (localStorage.getItem("kisanlink_logged_in") === "true") {
+        window.location.href = "index.html";
+    }
+
+
+    document.getElementById("loginForm").addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+            const mobile =
+                document.getElementById("mobile").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("message");
+
+
+            // Get saved farmer account
+            const savedUser =
+                localStorage.getItem("kisanlink_user");
+
+
+            if (!savedUser) {
+
+                message.textContent =
+                    "No account found. Please create an account first.";
+
+                message.style.color = "#d32f2f";
+
+                return;
+            }
+
+
+            const user =
+                JSON.parse(savedUser);
+
+
+            // Check login details
+            if (
+                mobile === user.mobile &&
+                password === user.password
+            ) {
+
+                // Login successful
+                localStorage.setItem(
+                    "kisanlink_logged_in",
+                    "true"
+                );
+
+                localStorage.setItem(
+                    "kisanlink_farmer_name",
+                    user.name
+                );
+
+
+                message.textContent =
+                    "Login successful! Opening KisanLink...";
+
+                message.style.color = "#2e7d32";
+
+
+                // Open main prototype
+                setTimeout(function() {
+
+                    window.location.href = "index.html";
+
+                }, 500);
+
+            } else {
+
+                message.textContent =
+                    "Invalid mobile number or password.";
+
+                message.style.color = "#d32f2f";
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
